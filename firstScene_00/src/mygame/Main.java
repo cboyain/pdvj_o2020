@@ -24,14 +24,20 @@ public class Main extends SimpleApplication {
         AppSettings settings = new AppSettings(true); //Creamos el objeto para controlar las especificaciones
         settings.setTitle("Tower Defense"); //Cambiamos el nombre de la ventana 
         //Integramos una imagen personal a la pantalla de inicio
-        //settings.setSettingsDialogImage("Interface/towerSplash.png");
+        settings.setSettingsDialogImage("Interface/towerSplash.png");
+        //modificar la resolucion 
+        settings.setResolution(1280, 960);
         Main app = new Main();
         app.setSettings(settings);//Aplicamos las especificaciones a la app
+        
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
+        //El objeto flayCma esta instanciado por defecto, al extender SimpleApplication
+        flyCam.setMoveSpeed(1.8f); //Determinamos que la camara se desplace a una mayor velocidad
+        
         // Creamos una malla en forma de un cubo (com.jme3.scene.Mesh -> com.jme3.scene.shape.AbstractBox)
         Box box_mesh  = new Box(1, 1, 1);
         //Geomtry es un nodo hoja del scene graph, que mantiene la información del mesh y material
