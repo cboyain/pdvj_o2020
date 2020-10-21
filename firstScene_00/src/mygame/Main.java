@@ -6,28 +6,33 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 
 /**
  * This is the Main Class of your Game. You should only do initialization here.
  * Move your Logic into AppStates or Controls
  * @author normenhansen
  * 
- * El presente programa sirve de inicio para el aprendizaje del desarrollo de videojuegos
- * El desarrollo de videojuegos es una tarea muy demandante, por lo que debes cuidar definir
- * y seguir una nomenclatura para todos los objetos que conformaran tu videojuego. 
+ * Se modificarán los settings del videojuego, para poder cambiar la imagen que aparece al ejecutar el programa.
+ *   Se cambia la imagen del splash, por la que se encentra en la carpeta Assets/Interface
+ *   Se cambia el nombre que aparece en la ventana
  * @author cboyain
-
  */
 public class Main extends SimpleApplication {
-
+    
     public static void main(String[] args) {
+        AppSettings settings = new AppSettings(true); //Creamos el objeto para controlar las especificaciones
+        settings.setTitle("Tower Defense"); //Cambiamos el nombre de la ventana 
+        //Integramos una imagen personal a la pantalla de inicio
+        //settings.setSettingsDialogImage("Interface/towerSplash.png");
         Main app = new Main();
+        app.setSettings(settings);//Aplicamos las especificaciones a la app
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
-                // Creamos una malla en forma de un cubo (com.jme3.scene.Mesh -> com.jme3.scene.shape.AbstractBox)
+        // Creamos una malla en forma de un cubo (com.jme3.scene.Mesh -> com.jme3.scene.shape.AbstractBox)
         Box box_mesh  = new Box(1, 1, 1);
         //Geomtry es un nodo hoja del scene graph, que mantiene la información del mesh y material
         // com.jme3.scene.Spatial -> com.jme3.scene.Geometry 
