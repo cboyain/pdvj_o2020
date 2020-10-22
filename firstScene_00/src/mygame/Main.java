@@ -13,20 +13,35 @@ import com.jme3.system.AppSettings;
  * Move your Logic into AppStates or Controls
  * @author normenhansen
  * 
- * Se modificarán los settings del videojuego, para poder cambiar la imagen que aparece al ejecutar el programa.
- *   Se cambia la imagen del splash, por la que se encentra en la carpeta Assets/Interface
- *   Se cambia el nombre que aparece en la ventana
+ * Se desarrollará la práctica del libro jMe beginners Guide de Ruth Kusterer. En esta práctica se 
+ * desarrollara un juego simple de defender la torre. En este tipo de juego el usuario 
+ * debera evitar que los oponentes (NPC) lleguen a la torre. Este juego es similar a 
+ * Plantas contra zombis.
+ * 1: Modifica los settings para especificar una imagen propia del juego y el nombre de 
+ * este sera "My Tower Defense Demo"
+ * 2: Mantener activo la iteraccion con la "flyCam" es decir no modificar por ahora "settings.useInput()"
+ * 3: Crear una caja plana de 33-WU para que sea el piso(floor)
+ * 4: Crear un "playerNode", un "towerNode", un "creepNode", y adjuntarlos al "rootNode".
+ * 5: Crear las geometrias; una caja acostada amarilla representando la base del jugador, 
+ * una caja alta verde que representara una torre, y una cubo pequeño negro que representa un creep.
+ * 6: Adjunta las geometrias al playerNode, al towerNode, y al creepNode respectivamente. 
+ * 7: Posiciona la gemetria de la base en el origen.Esto permitira orientares.
+ * 8: Posiciona una tore a la izquierda y otra a la derecha en frente de la base, y algunos pequeños 
+ * cubos creep a lo lejos a lo largo del eje z
+ * 9: Agrega el codigo que desactiva el objeto "StatsView"
  * @author cboyain
  */
 public class Main extends SimpleApplication {
     
     public static void main(String[] args) {
         AppSettings settings = new AppSettings(true); //Creamos el objeto para controlar las especificaciones
-        settings.setTitle("Tower Defense"); //Cambiamos el nombre de la ventana 
+        settings.setTitle("My Tower Defense Demo"); //Cambiamos el nombre de la ventana 
         //Integramos una imagen personal a la pantalla de inicio
         settings.setSettingsDialogImage("Interface/towerSplash.png");
         //modificar la resolucion 
         settings.setResolution(1280, 960);
+        //useInput establece si deseamos reaccionar a las entradas del mouse o teclado
+        //settings.useInput(false);
         Main app = new Main();
         app.setSettings(settings);//Aplicamos las especificaciones a la app
         
@@ -44,7 +59,7 @@ public class Main extends SimpleApplication {
         // com.jme3.scene.Spatial -> com.jme3.scene.Geometry 
         Geometry box01_geom  = new Geometry("Box", box_mesh );
 
-        //Se crea un material simple de color azul/amarillo/etc  que envolverá a la malla
+        // Se crea un material simple de color azul/amarillo/etc  que envolverá a la malla
         // com.jme3.material.Material (esencialmente es una lista de los parametros que describen 
         // la forma de renderizar a Geometry)
         Material box01_mat  = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
