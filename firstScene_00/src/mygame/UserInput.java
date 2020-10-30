@@ -39,6 +39,10 @@ public class UserInput extends SimpleApplication {
     private final static String MAPPING_COLOR = "Toggle Color";
     private final static String MAPPING_ROTATE = "Rotate";
     
+    //Aqui se declara la geometria para que los listener tengan puedan tener accesos al objeto 
+    // al momento que lo mandan llamara en onAction y onAnalog
+    private Geometry box01_geom;
+    
     public static void main (String[] args){
         UserInput app = new UserInput();
         app.start();
@@ -59,8 +63,11 @@ public class UserInput extends SimpleApplication {
         inputManager.addListener(actionListener, new String[]{MAPPING_COLOR});
         inputManager.addListener(analogListener, new String[]{MAPPING_ROTATE});
         
+        
+        
         Box blue01 = new Box(1,1,1);
-        Geometry box01_geom = new Geometry("box blue", blue01);
+        //Se modifico la posicion en donde se definicion del objeto box01_geom
+        box01_geom = new Geometry("box blue", blue01);
         Material box01_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         box01_mat.setColor("Color", ColorRGBA.Blue);
         box01_geom.setMaterial(box01_mat);
@@ -73,13 +80,24 @@ public class UserInput extends SimpleApplication {
     private final ActionListener actionListener = new ActionListener() {
             @Override
             public void onAction(String name, boolean isPressed, float tpf){
+                // En este método es donde se definira las condicones que dictaran la acción 
                 System.out.println("you triggered : "+name);
+                // Se evalua si es que se ha recibido el input
+                // !isPressed evalua el input para activar cuando se libere el trigger, es 
+                // decir, cuando se suelta el boton del mouse
+                if (name.equals(MAPPING_COLOR)&& !isPressed){
+                    box01_geom.getMaterial().setColor("Color", ColorRGBA.randomColor());
+                }
             }
     };
     private final AnalogListener analogListener = new AnalogListener(){
             @Override
             public void onAnalog(String name, float intensity, float tpf){
-                System.out.println("You triggered: "+name);
+                    // se comprueba que el trigger indentificado corresponda a la acción deseada
+                    if(name.equals(MAPPING_ROTATE)){
+                        box01_geom.rotate(0, intensity, 0);
+                        System.out.println("You triggered: "+name+" intensidad: "+intensity);
+                    }
                 }
             };
     
