@@ -20,10 +20,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 
 /**
- * Este programa sirve de introducción para el manejo de las entradas y las acciones que 
- * estas entradas deben impulsar en el juego.
- * Recuerda que la clase SimpleApplication proporsiona un manejador para las entradas
- * "inputManager"
+ * A partir del codigo para manejar entradas se desarrolla el siguiente codigo que mostrara la 
+ * forma en la cual establecer el codigo para producir objetos en masa. Tambien se utilizar para 
+ * proporsionar una mira de forma que sepamos a donde apuntar
  * @author boyolu
  */
 public class TargetPickCenter extends SimpleApplication {
@@ -43,7 +42,8 @@ public class TargetPickCenter extends SimpleApplication {
     //Aqui se declara la geometria para que los listener tengan puedan tener accesos al objeto 
     // al momento que lo mandan llamara en onAction y onAnalog
     private Geometry box01_geom;
-
+    
+    //Se define y hace estatico la malla que se podra replicar
     public static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
     
     public static void main (String[] args){
@@ -51,7 +51,13 @@ public class TargetPickCenter extends SimpleApplication {
         app.start();
                 
     }
-    
+    /**
+     * myBox regresa un geomtry de una caja listo para agregarse a un nodo. 
+     * @param name String del Nombre para identificar la geometry en el scene graph
+     * @param loc Vector3f que indica la posicion dentro del nodo que se adguntara
+     * @param color ColorRGBA que sera asingado al material de la caja
+     * @return Geometry de una caja con los parametros especificados
+     */
     private Geometry myBox(String name, Vector3f loc, ColorRGBA color){
         Geometry geom = new Geometry(name, mesh);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -60,19 +66,23 @@ public class TargetPickCenter extends SimpleApplication {
         geom.setLocalTranslation(loc);
         return geom;
     }
-    
+    /**
+     * attachCenterMarck crea un objeto geometry que servira de mira para apuntar 
+     * diferentes objetos en el escenario. Ya que es una marca 2D, se debe adjuntar 
+     * a la interface 2D del usurio "guiNode", este objeto es intanciado en 
+     * cualquier SimpleApplication.
+     */
     private void attachCenterMark(){
         Geometry c = this.myBox("center mark", Vector3f.ZERO, ColorRGBA.White);
         c.scale(4);
         c.setLocalTranslation(settings.getWidth()/2, settings.getHeight()/2, 0);
-        guiNode.attachChild(c);
+        guiNode.attachChild(c); //adjunta a la interface 2D del usuario
     }
     
     @Override
     public void simpleInitApp(){
         //para hacer uso de los triggers y mapping se deben registrar en el inputManager
-        //** Recuerda asociar el nombre del trigger con la acción, por si se decide modificar 
-        // el imput que lo activa
+        //** Se utiliz el Rotate mapping para la mira del mouse en la escena
         inputManager.addMapping(MAPPING_ROTATE, TRIGGER_ROTATE);
         inputManager.addMapping(MAPPING_COLOR, TRIGGER_COLOR);
         //Para utilizar el segundo trigger se registra al inputManager
@@ -93,8 +103,11 @@ public class TargetPickCenter extends SimpleApplication {
         
         //rootNode.attachChild(box01_geom);
         
+        // La mira que indica la posiicon del mouse es inicializada
         attachCenterMark();
         
+        // Utilizando el metodo y la malla definida de forma estatica, se hacen y adjuntan 
+        // varias cajas a la escena
         rootNode.attachChild(this.myBox("Red Cube", new Vector3f(0, 1.5f, 0), ColorRGBA.Red));
         rootNode.attachChild(this.myBox("Blue Cube", new Vector3f(0, -1.5f, 0), ColorRGBA.Blue));
         rootNode.attachChild(this.myBox("Yellow Cube", new Vector3f(2.5f, 1.5f, 0), ColorRGBA.Yellow));
