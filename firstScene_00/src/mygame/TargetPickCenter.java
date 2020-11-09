@@ -6,6 +6,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -15,6 +16,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
@@ -22,7 +24,9 @@ import com.jme3.scene.shape.Box;
 /**
  * A partir del codigo para manejar entradas se desarrolla el siguiente codigo que mostrara la 
  * forma en la cual establecer el codigo para producir objetos en masa. Tambien se utilizar para 
- * proporsionar una mira de forma que sepamos a donde apuntar
+ * proporsionar una mira de forma que sepamos a donde apuntar.
+ * 
+ * Se complementara la practica con "pick a brick"
  * @author boyolu
  */
 public class TargetPickCenter extends SimpleApplication {
@@ -52,7 +56,7 @@ public class TargetPickCenter extends SimpleApplication {
                 
     }
     /**
-     * myBox regresa un geomtry de una caja listo para agregarse a un nodo. 
+     * myBox regresa un geometry de una caja listo para agregarse a un nodo. 
      * @param name String del Nombre para identificar la geometry en el scene graph
      * @param loc Vector3f que indica la posicion dentro del nodo que se adguntara
      * @param color ColorRGBA que sera asingado al material de la caja
@@ -130,13 +134,29 @@ public class TargetPickCenter extends SimpleApplication {
                 }
             }
     };
+    //Utilizamos el listener analogico ya que la accion de rotacion sera una accion continua.
     private final AnalogListener analogListener = new AnalogListener(){
             @Override
             public void onAnalog(String name, float intensity, float tpf){
                     // se comprueba que el trigger indentificado corresponda a la acción deseada
                     if(name.equals(MAPPING_ROTATE)){
-                        box01_geom.rotate(0, intensity, 0);
-                        System.out.println("You triggered: "+name+" intensidad: "+intensity);
+                        // En esta seccio determinamos la accion de rotar la caja que este apuntando 
+                        // La mira del mouse.
+                        //colision identificara el objeto al cual se le hace click
+                        CollisionResults results = new CollisionResults();
+                        // Se proyecta una linea de acuerdo a la posicion de la camara, en la 
+                        //direccion donde la camara esta apuntando
+                        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+                        //calculamos si esta rayo proyectado hace colision con el objeto
+                        rootNode.collideWith(ray, results);
+                        //imprimir los resultdos intermedios de la evaluacion de coliciones 
+                        for (int i=0; i < results.size(); i++){
+                            float dist = results.getCollision(i).getDistance();
+                            Vector3f pt = results.getCollision(i).getContactPoint();
+                            String target = results.getCollision(i).getGeometry().getName();
+                            System.out.println("Selection: #"+ i + ": "+ target + " at "+ pt + ", " + dist + " WU away.");
+                        }
+                        
                     }
                 }
             };
