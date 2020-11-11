@@ -149,14 +149,27 @@ public class TargetPickCenter extends SimpleApplication {
                         Ray ray = new Ray(cam.getLocation(), cam.getDirection());
                         //calculamos si esta rayo proyectado hace colision con el objeto
                         rootNode.collideWith(ray, results);
-                        //imprimir los resultdos intermedios de la evaluacion de coliciones 
-                        for (int i=0; i < results.size(); i++){
-                            float dist = results.getCollision(i).getDistance();
-                            Vector3f pt = results.getCollision(i).getContactPoint();
-                            String target = results.getCollision(i).getGeometry().getName();
-                            System.out.println("Selection: #"+ i + ": "+ target + " at "+ pt + ", " + dist + " WU away.");
-                        }
                         
+                        //Si el usuario ha hecho click en algo, identificaremos la geometria seleccionada
+                        if (results.size()>0){
+                            Geometry target = results.getClosestCollision().getGeometry();
+                            //se implementara la accion identificada
+                            if (target.getName().equals("Red Cube") || target.getName().equals("Yellow Cube")){
+                                target.rotate(0,-intensity,0);//rotar a la izquierda
+                            } else if (target.getName().equals("Blue Cube") || target.getName().equals("Green Cube") ){
+                                target.rotate(0,intensity,0);//rotar a la derecha
+                            }
+                            
+                            //imprimir los resultdos intermedios de la evaluacion de coliciones 
+                            for (int i=0; i < results.size(); i++){
+                                float dist = results.getCollision(i).getDistance();
+                                Vector3f pt = results.getCollision(i).getContactPoint();
+                                String target_name = results.getCollision(i).getGeometry().getName();
+                                System.out.println("Selection: #"+ i + ": "+ target_name + " at "+ pt + ", " + dist + " WU away.");
+                            }
+                        } else{
+                            System.out.println("Selection: Nothing");
+                        }
                     }
                 }
             };
