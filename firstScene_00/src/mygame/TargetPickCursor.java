@@ -22,15 +22,19 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 
 /**
- * A partir del codigo para manejar entradas se desarrolla el siguiente codigo que mostrara la 
- * forma en la cual establecer el codigo para producir objetos en masa. Tambien se utilizar para 
- * proporsionar una mira de forma que sepamos a donde apuntar.
+ * TargetPickCursor - Es la evolucion del programa TargetPickCenter
  * 
  * Se complementara la practica con "pick a brick"
  * - Definiendo una mira y detectando coliciones, se identificara los objetos seleccionados
+ * 
+ * Se hace un segndo complemento con "pick a brick" (usando el mouse)
+ * - En lugar de hacer una mira para identificar los objetos sobre los cuales se hace click, se 
+ * hara visible el mouse en la escena para dar cuenta donde podriamos hacer click.
+ * - Se removera la mira.
+ * 
  * @author boyolu
  */
-public class TargetPickCenter extends SimpleApplication {
+public class TargetPickCursor extends SimpleApplication {
     // Constantes triggers que representan los clicks de la barra y el mouse
     // Los triggers son los objetos que representan las entradas fisicas de los cliks o joystick
     private final static Trigger TRIGGER_COLOR = new KeyTrigger(KeyInput.KEY_SPACE);
@@ -52,7 +56,7 @@ public class TargetPickCenter extends SimpleApplication {
     public static Box mesh = new Box(Vector3f.ZERO, 1, 1, 1);
     
     public static void main (String[] args){
-        TargetPickCenter app = new TargetPickCenter();
+        TargetPickCursor app = new TargetPickCursor();
         app.start();
                 
     }
@@ -71,18 +75,7 @@ public class TargetPickCenter extends SimpleApplication {
         geom.setLocalTranslation(loc);
         return geom;
     }
-    /**
-     * attachCenterMarck crea un objeto geometry que servira de mira para apuntar 
-     * diferentes objetos en el escenario. Ya que es una marca 2D, se debe adjuntar 
-     * a la interface 2D del usurio "guiNode", este objeto es intanciado en 
-     * cualquier SimpleApplication.
-     */
-    private void attachCenterMark(){
-        Geometry c = this.myBox("center mark", Vector3f.ZERO, ColorRGBA.White);
-        c.scale(4);
-        c.setLocalTranslation(settings.getWidth()/2, settings.getHeight()/2, 0);
-        guiNode.attachChild(c); //adjunta a la interface 2D del usuario
-    }
+    
     
     @Override
     public void simpleInitApp(){
@@ -97,7 +90,10 @@ public class TargetPickCenter extends SimpleApplication {
         inputManager.addListener(actionListener, new String[]{MAPPING_COLOR});
         inputManager.addListener(analogListener, new String[]{MAPPING_ROTATE});
         
-        
+        // El cursor del mouse esta escondido por defecto, por lo cual para hacerlo aparecer
+        // se requiere la siguientes lineas
+        flyCam.setDragToRotate(true);
+        inputManager.setCursorVisible(true);
         
         Box blue01 = new Box(1,1,1);
         //Se modifico la posicion en donde se definicion del objeto box01_geom
@@ -108,9 +104,7 @@ public class TargetPickCenter extends SimpleApplication {
         
         //rootNode.attachChild(box01_geom);
         
-        // La mira que indica la posiicon del mouse es inicializada
-        attachCenterMark();
-        
+                
         // Utilizando el metodo y la malla definida de forma estatica, se hacen y adjuntan 
         // varias cajas a la escena
         rootNode.attachChild(this.myBox("Red Cube", new Vector3f(0, 1.5f, 0), ColorRGBA.Red));
@@ -137,43 +131,11 @@ public class TargetPickCenter extends SimpleApplication {
     };
     //Utilizamos el listener analogico ya que la accion de rotacion sera una accion continua.
     private final AnalogListener analogListener = new AnalogListener(){
-            @Override
-            public void onAnalog(String name, float intensity, float tpf){
-                    // se comprueba que el trigger indentificado corresponda a la acción deseada
-                    if(name.equals(MAPPING_ROTATE)){
-                        // En esta seccio determinamos la accion de rotar la caja que este apuntando 
-                        // La mira del mouse.
-                        //colision identificara el objeto al cual se le hace click
-                        CollisionResults results = new CollisionResults();
-                        // Se proyecta una linea de acuerdo a la posicion de la camara, en la 
-                        //direccion donde la camara esta apuntando
-                        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-                        //calculamos si esta rayo proyectado hace colision con el objeto
-                        rootNode.collideWith(ray, results);
-                        
-                        //Si el usuario ha hecho click en algo, identificaremos la geometria seleccionada
-                        if (results.size()>0){
-                            Geometry target = results.getClosestCollision().getGeometry();
-                            //se implementara la accion identificada
-                            if (target.getName().equals("Red Cube") || target.getName().equals("Yellow Cube")){
-                                target.rotate(0,-intensity,0);//rotar a la izquierda
-                            } else if (target.getName().equals("Blue Cube") || target.getName().equals("Green Cube") ){
-                                target.rotate(0,intensity,0);//rotar a la derecha
-                            }
-                            
-                            //imprimir los resultdos intermedios de la evaluacion de coliciones 
-                            for (int i=0; i < results.size(); i++){
-                                float dist = results.getCollision(i).getDistance();
-                                Vector3f pt = results.getCollision(i).getContactPoint();
-                                String target_name = results.getCollision(i).getGeometry().getName();
-                                System.out.println("Selection: #"+ i + ": "+ target_name + " at "+ pt + ", " + dist + " WU away.");
-                            }
-                        } else{
-                            System.out.println("Selection: Nothing");
-                        }
-                    }
-                }
-            };
+        @Override
+        public void onAnalog(String name, float intensity, float tpf){
+            
+        }
+    };
     
     @Override
     public void simpleUpdate(float tpf){
