@@ -17,6 +17,7 @@ import com.jme3.input.controls.Trigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
@@ -31,6 +32,7 @@ import com.jme3.scene.shape.Box;
  * - En lugar de hacer una mira para identificar los objetos sobre los cuales se hace click, se 
  * hara visible el mouse en la escena para dar cuenta donde podriamos hacer click.
  * - Se removera la mira.
+ * - Aplicar ray casting con el cursor del mouse
  * 
  * @author boyolu
  */
@@ -133,7 +135,13 @@ public class TargetPickCursor extends SimpleApplication {
     private final AnalogListener analogListener = new AnalogListener(){
         @Override
         public void onAnalog(String name, float intensity, float tpf){
-            
+            // creamos una lista vacia de resultado para las colisiones
+            CollisionResults results = new CollisionResults();
+            // Al hacer uso del mouse, se requiere de la posicion 2D de éste
+            Vector2f click2d = inputManager.getCursorPosition();
+            // Convertimos el vector2D en uno 3D para definir el origen del ray, ya que 
+            // un ray requiere vector 3D
+            Vector3f click3d = cam.getWorldCoordinates(click2d, 0f);
         }
     };
     
